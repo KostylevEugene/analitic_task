@@ -1,8 +1,13 @@
-from models import *
 from db import db_session
+from models import *
 
-s = 'ACrfvt'
 
-if 'AC' in s:
-    print(4)
 
+def get_category_id(cat):
+    result = db_session.query(Category.id).filter(Category.category == cat).scalar()
+    return result
+
+
+
+# print(get_category_id('canned_food'))
+print(get_last_action_id())

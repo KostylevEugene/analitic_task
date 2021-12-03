@@ -1,5 +1,5 @@
 from db import Base, engine
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Date
 
 
 class Category(Base):
@@ -15,19 +15,19 @@ class Category(Base):
         return f'Category {self.category}'
 
 
-class Subcategory(Base):
-    __tablename__ = 'subcategories'
-
-    id = Column(Integer(), primary_key=True)
-    catecory_id = Column(Integer(), ForeignKey(Category.id), index=True, nullable=False)
-    subcategory = Column(String())
-
-    def __init__(self, category_id, subcategory):
-        self.catecory_id = category_id
-        self.subcategory = subcategory
-
-    def __repr__(self):
-        return f'Subcategory {self.catecory_id}, {self.subcategory}'
+# class Subcategory(Base):
+#     __tablename__ = 'subcategories'
+#
+#     id = Column(Integer(), primary_key=True)
+#     catecory_id = Column(Integer(), ForeignKey(Category.id), index=True, nullable=False)
+#     subcategory = Column(String())
+#
+#     def __init__(self, category_id, subcategory):
+#         self.catecory_id = category_id
+#         self.subcategory = subcategory
+#
+#     def __repr__(self):
+#         return f'Subcategory {self.catecory_id}, {self.subcategory}'
 
 
 class Good(Base):
@@ -54,8 +54,8 @@ class Action(Base):
 
     id = Column(Integer(), primary_key=True)
     ip = Column(Integer())
-    time = Column(DateTime())
-    date = Column(DateTime())
+    time = Column(String())
+    date = Column(String())
 
     def __init__(self, ip, time, date):
         self.ip = ip
@@ -138,15 +138,13 @@ class UsersAction(Base):
     id = Column(Integer(), primary_key=True)
     action_id = Column(Integer(), ForeignKey(Action.id), index=True, nullable=False)
     category_id = Column(Integer(), ForeignKey(Category.id), index=True, nullable=True)
-    subcategory_id = Column(Integer(), ForeignKey(Subcategory.id), index=True, nullable=True)
 
-    def __init__(self, action_id, category_id, subcategory_id):
+    def __init__(self, action_id, category_id):
         self.action_id = action_id
         self.category_id = category_id
-        self.subcategory_id = subcategory_id
 
     def __repr__(self):
-        return f'UsersAction {self.action_id}, {self.category_id}, {self.subcategory_id}'
+        return f'UsersAction {self.action_id}, {self.category_id}'
 
 
 if __name__ == "__main__":
