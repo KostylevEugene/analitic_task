@@ -16,6 +16,9 @@ def get_last_action_id():
     result = db_session.query(func.max(Action.id)).scalar()
     return result
 
+def get_last_category_id():
+    result = db_session.query(func.max(Category.id)).scalar()
+    return result
 
 f = open('newlogs.txt')
 
@@ -58,15 +61,6 @@ for line in lines:
             db_session.add(new_category, new_action)
             db_session.commit()
 
-            last_action_id = get_last_action_id()
-
-            print(last_action_id)
-
-            category_id = get_category_id(category[0])
-
-            new_user_action = UsersAction(last_action_id, category_id)
-            db_session.add(new_user_action)
-            db_session.commit()
 
         # Если категория уже существует
         if category and is_category_exists(category[0]) != None:
@@ -84,6 +78,7 @@ for line in lines:
 
         # Если категория отсутствует
         else:
+
             new_action = Action(ip, time, date)
             db_session.add(new_action)
             db_session.commit()

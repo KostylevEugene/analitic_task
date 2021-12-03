@@ -137,7 +137,7 @@ class UsersAction(Base):
 
     id = Column(Integer(), primary_key=True)
     action_id = Column(Integer(), ForeignKey(Action.id), index=True, nullable=False)
-    category_id = Column(Integer(), ForeignKey(Category.id), index=True, nullable=True)
+    category_id = Column(Integer(), ForeignKey(Category.id), index=True, nullable=False)
 
     def __init__(self, action_id, category_id):
         self.action_id = action_id

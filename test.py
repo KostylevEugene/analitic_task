@@ -8,6 +8,4 @@ def get_category_id(cat):
     return result
 
 
-
 # print(get_category_id('canned_food'))
-print(get_last_action_id())
