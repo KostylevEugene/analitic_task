@@ -1,26 +1,10 @@
 from db import db_session
 from models import *
-from sqlalchemy.sql import func
+from queries import *
 import re
 
 
-def is_category_exists(cat):
-    result = db_session.query(Category.category).filter(Category.category == cat).scalar()
-    return result
-
-def get_category_id(cat):
-    result = db_session.query(Category.id).filter(Category.category == cat).scalar()
-    return result
-
-def get_last_action_id():
-    result = db_session.query(func.max(Action.id)).scalar()
-    return result
-
-def get_last_category_id():
-    result = db_session.query(func.max(Category.id)).scalar()
-    return result
-
-f = open('newlogs.txt')
+f = open('logs.txt')
 
 lines = f.readlines()
 
@@ -36,18 +20,53 @@ for line in lines:
         amount = re.findall(r'amount=(\d+)', line)[0]
         cart_id = re.findall(r'cart_id=(\d+)', line)[0]
 
-        # print(goods_id, amount, cart_id)
+        new_action = Action(ip, time, date)
+        db_session.add(new_action)
 
-    if re.search(r'pay\?', line):
+        if is_cart_exists(cart_id) == None:
+            cart = Cart(cart_id)
+            db_session.add(cart)
+
+        if is_good_exists(goods_id) == None:
+            goods = Good(goods_id)
+            db_session.add(goods)
+
+        db_session.commit()
+
+        last_action_id = get_last_action_id()
+
+        goods_in_cart = GoodsInCart(cart_id, goods_id, amount, last_action_id)
+        db_session.add(goods_in_cart)
+        db_session.commit()
+
+
+    elif re.search(r'pay\?', line):
         user_id = re.findall(r'user_id=(\d+)', line)[0]
         cart_id = re.findall(r'cart_id=(\d+)', line)[0]
 
-        # print(user_id, cart_id)
+        new_action = Action(ip, time, date)
+        db_session.add(new_action)
 
-    if re.search(r'success', line):
+        if is_user_exists(user_id) == None:
+            user = User(user_id, ip)
+            db_session.add(user)
+            db_session.commit()
+
+        else:
+            db_session.query(User).filter(User.id == user_id).update({'last_ip': ip})
+
+        last_action_id = get_last_action_id()
+
+        payment = Payment(cart_id, last_action_id, user_id, None)
+        db_session.add(payment)
+        db_session.commit()
+
+    elif re.search(r'success', line):
         paid_cart = re.findall(r'pay_(\d+)', line)[0]
 
-        # print(paid_cart)
+        db_session.query(Payment).filter(Payment.cart_id == paid_cart).update({'payment_status': 'paid'})
+        db_session.commit()
+
 
     else:
         category = re.findall(r'\.com/(\w+)', line)
@@ -78,10 +97,8 @@ for line in lines:
 
         # Если категория отсутствует
         else:
-
             new_action = Action(ip, time, date)
             db_session.add(new_action)
             db_session.commit()
 
 
-    # print(date[0], time[0], ip[0], user_id)

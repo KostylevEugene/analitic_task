@@ -15,38 +15,23 @@ class Category(Base):
         return f'Category {self.category}'
 
 
-# class Subcategory(Base):
-#     __tablename__ = 'subcategories'
-#
-#     id = Column(Integer(), primary_key=True)
-#     catecory_id = Column(Integer(), ForeignKey(Category.id), index=True, nullable=False)
-#     subcategory = Column(String())
-#
-#     def __init__(self, category_id, subcategory):
-#         self.catecory_id = category_id
-#         self.subcategory = subcategory
-#
-#     def __repr__(self):
-#         return f'Subcategory {self.catecory_id}, {self.subcategory}'
-
-
 class Good(Base):
     __tablename__ = 'goods'
 
     id = Column(Integer(), primary_key=True)
     good = Column(String())
-    category_id = Column(Integer(), ForeignKey(Category.id), index=True, nullable=False)
-    price = Column(Integer())
-    description = Column(String())
+    # category_id = Column(Integer(), ForeignKey(Category.id), index=True, nullable=False)
+    # price = Column(Integer())
+    # description = Column(String())
 
-    def __init__(self, good, category_id, price, description):
-        self.good = good
-        self.category_id = category_id
-        self.price = price
-        self.description = description
+    def __init__(self, id):
+        self.id = id
+        # self.category_id = category_id
+        # self.price = price
+        # self.description = description
 
     def __repr__(self):
-        return f'Good {self.good}, {self.category_id}, {self.price}, {self.description}'
+        return f'Good id {self.id}'
 
 
 class Action(Base):
@@ -71,14 +56,15 @@ class User(Base):
 
     id = Column(Integer(), primary_key=True)
     username = Column(String)
-    action_ip = Column(Integer(), ForeignKey(Action.ip), index=True, nullable=False)
+    last_ip = Column(Integer())
 
-    def __init__(self, username, action_ip):
-        self.username = username
-        self.action_ip = action_ip
+    def __init__(self, id, last_ip):
+        self.id = id
+        # self.username = username
+        self.last_ip = last_ip
 
     def __repr__(self):
-        return f'User {self.username}, {self.action_ip} '
+        return f'User id {self.id} '
 
 
 class Cart(Base):
