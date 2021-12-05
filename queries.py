@@ -38,5 +38,28 @@ def is_user_exists(user):
     return result
 
 
+def get_freq_country():
+    result = db_session.query(Action.ip).group_by(Action.ip).order_by(func.count(Action.ip).desc()).limit(1).scalar()
+    return result
+
+
+def get_freq_country_fresh_fish():
+    result = db_session.query(Action.ip).join(UsersAction, UsersAction.action_id == Action.id).filter(
+        UsersAction.category_id == 1).group_by(Action.ip).order_by(func.count(Action.ip).desc()).limit(1).scalar()
+    return result
+
+
+def count_not_paid_carts():
+    result = db_session.query(func.count(Cart.id)).scalar() - db_session.query(func.count(Payment.payment_status)).\
+        scalar()
+    return result
+
+
+def get_amount_freq_users():
+    result = len(db_session.query(func.count(Payment.user_id)).group_by(Payment.user_id).\
+        having(func.count(Payment.user_id) > 1).all())
+    return result
+
+
 if __name__ == '__main__':
     print(is_user_exists(81270149216))
