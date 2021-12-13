@@ -1,5 +1,8 @@
-from db import Base, engine
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Date
+from db_eng import Base, engine
+from sqlalchemy import Column, Integer, String, ForeignKey
+
+
+''' В данном файле находится модель БД '''
 
 
 class Category(Base):
