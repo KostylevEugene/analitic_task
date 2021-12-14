@@ -63,14 +63,18 @@ def get_freq_country_fresh_fish():
 
 # Возвращает количество не оплаченных корзин
 def count_not_paid_carts():
-    result = db_session.query(func.count(Cart.id)).scalar() - db_session.query(func.count(Payment.payment_status)).\
-        scalar()
+    carts = db_session.query(func.count(Cart.id)).scalar()
+    paid_carts = db_session.query(func.count(Payment.payment_status)).scalar()
+    result = carts - paid_carts
     return result
 
 
 # Возвращает количество пользователей совершавших повторные покупки
 def get_amount_freq_users():
-    result = len(db_session.query(func.count(Payment.user_id)).group_by(Payment.user_id).\
-        having(func.count(Payment.user_id) > 1).all())
-    return result
+    result = db_session.query(func.count(Payment.user_id)).group_by(Payment.user_id).\
+        having(func.count(Payment.user_id) > 1).all()
+    return len(result)
 
+
+if __name__ == '__main__':
+    print(count_not_paid_carts())

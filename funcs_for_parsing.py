@@ -6,8 +6,8 @@ import re
 
 
 # Создаёт модель события и записывает её в БД
-def create_new_user(ip, time, date):
-    new_action = Action(ip, time, date)
+def create_new_user(date, time, ip):
+    new_action = Action(date, time, ip)
     db_session.add(new_action)
 
 
@@ -35,9 +35,9 @@ def parse_goods_info(line):
 def send_cart_info_to_db(line):
     goods_id, amount, cart_id = parse_goods_info(line)
 
-    ip, time, date = parse_date_ip(line)
+    date, time, ip = parse_date_ip(line)
 
-    create_new_user(ip, time, date)
+    create_new_user(date, time, ip)
 
     if is_cart_exists(cart_id) is None:
         cart = Cart(cart_id)
@@ -62,9 +62,9 @@ def parse_pay_info(line):
 
 # Записывает данные платежа в БД
 def send_pay_info(line):
-    ip, time, date = parse_date_ip(line)
+    date, time, ip = parse_date_ip(line)
 
-    create_new_user(ip, time, date)
+    create_new_user(date, time, ip)
 
     user_id, cart_id = parse_pay_info(line)
 
@@ -92,13 +92,13 @@ def confirm_payment(line):
 def parse_category(line):
     category = re.findall(r'\.com/(\w+)', line)         # regex пример:  semi_manufactures
 
-    ip, time, date = parse_date_ip(line)
+    date, time, ip = parse_date_ip(line)
 
     # Если категория новая
     if category and is_category_exists(category[0]) is None:
         new_category = Category(category[0])
 
-        create_new_user(ip, time, date)
+        create_new_user(date, time, ip)
 
         add_commit_to_db(new_category)
 
@@ -110,7 +110,7 @@ def parse_category(line):
 
     # Если категория уже существует
     elif category and is_category_exists(category[0]) is not None:
-        create_new_user(ip, time, date)
+        create_new_user(date, time, ip)
         db_session.commit()
 
         last_action_id = get_last_action_id()
@@ -121,5 +121,5 @@ def parse_category(line):
 
     # Если категория отсутствует
     else:
-        create_new_user(ip, time, date)
+        create_new_user(date, time, ip)
         db_session.commit()

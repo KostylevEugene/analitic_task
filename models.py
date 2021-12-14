@@ -41,14 +41,14 @@ class Action(Base):
     __tablename__ = 'actions'
 
     id = Column(Integer(), primary_key=True)
-    ip = Column(Integer())
-    time = Column(String())
     date = Column(String())
+    time = Column(String())
+    ip = Column(Integer())
 
-    def __init__(self, ip, time, date):
-        self.ip = ip
-        self.time = time
+    def __init__(self, date, time, ip):
         self.date = date
+        self.time = time
+        self.ip = ip
 
     def __repr__(self):
         return f'Action {self.ip}, {self.time}, {self.date}'
